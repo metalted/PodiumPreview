@@ -11,7 +11,7 @@ namespace PodiumPlugin
     {
         public const string pluginGuid = "com.metalted.zeepkist.podiumpreview";
         public const string pluginName = "Level Editor Podium Preview";
-        public const string pluginVersion = "1.2";
+        public const string pluginVersion = "1.3.0";
 
         //Create a static reference for the config file.
         public static ConfigFile Cfg { get; private set; }
@@ -53,9 +53,12 @@ namespace PodiumPlugin
         //Send update calls to the manager.
         public void Update()
         {
-            if (PodiumManagement.inTestLevel)
+            if (PodiumManagement.levelEditorHardLock)
             {
-                PodiumManagement.Update();
+                if (PodiumManagement.inTestLevel)
+                {
+                    PodiumManagement.Update();
+                }
             }
         }
     }
@@ -70,6 +73,7 @@ namespace PodiumPlugin
         public static GameMaster master;
         //Flag set to true when the player is in photomode.
         public static bool inPhotoMode = false;
+        public static bool levelEditorHardLock = false;
 
         //Used for the update function.
         public static bool dropLosers = true;
@@ -89,6 +93,8 @@ namespace PodiumPlugin
             inTestLevel = false;
             //Can't be in photomode cause we are in the level editor.
             inPhotoMode = false;
+            //Enable the mod
+            levelEditorHardLock = true;
         }
 
         //Called when we load the game scene. If this is not the test level, gameMaster will be null.
@@ -285,6 +291,24 @@ namespace PodiumPlugin
             int randomIndex = Random.Range(0, keys.Count);
             int randomKey = keys[randomIndex];
             return randomKey;
+        }
+    }
+
+    [HarmonyPatch(typeof(MainMenuUI), "Awake")]
+    public class MainMenuAwake
+    {
+        public static void Prefix()
+        {
+            PodiumManagement.levelEditorHardLock = false;
+        }
+    }
+
+    [HarmonyPatch(typeof(LobbyManager), "Awake")]
+    public class LobbyAwake
+    {
+        public static void Prefix()
+        {
+            PodiumManagement.levelEditorHardLock = false;
         }
     }
 
