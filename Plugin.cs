@@ -11,7 +11,7 @@ namespace PodiumPlugin
     {
         public const string pluginGuid = "com.metalted.zeepkist.podiumpreview";
         public const string pluginName = "Level Editor Podium Preview";
-        public const string pluginVersion = "1.3.0";
+        public const string pluginVersion = "1.4.0";
 
         //Create a static reference for the config file.
         public static ConfigFile Cfg { get; private set; }
@@ -236,13 +236,13 @@ namespace PodiumPlugin
             Vector3Int player3Cosmetics = GetRandomCosmetics();
 
             podium.winner1.gameObject.SetActive(true);
-            podium.winner1.DoCarSetup((Object_Soapbox)podium.wardrobe.GetCosmetic(ZeepkistNetworking.CosmeticItemType.zeepkist, player1Cosmetics.x, false), (HatValues)podium.wardrobe.GetCosmetic(ZeepkistNetworking.CosmeticItemType.hat, player1Cosmetics.y, false), (CosmeticColor)podium.wardrobe.GetCosmetic(ZeepkistNetworking.CosmeticItemType.skin, player1Cosmetics.z, false), true);
+            podium.winner1.DoCarSetup((Object_Soapbox)podium.wardrobe.GetCosmetic(ZeepkistNetworking.CosmeticItemType.zeepkist, player1Cosmetics.x, false), (HatValues)podium.wardrobe.GetCosmetic(ZeepkistNetworking.CosmeticItemType.hat, player1Cosmetics.y, false), (CosmeticColor)podium.wardrobe.GetCosmetic(ZeepkistNetworking.CosmeticItemType.skin, player1Cosmetics.z, false), true, false, true);
 
             podium.winner2.gameObject.SetActive(true);
-            podium.winner2.DoCarSetup((Object_Soapbox)podium.wardrobe.GetCosmetic(ZeepkistNetworking.CosmeticItemType.zeepkist, player2Cosmetics.x, false), (HatValues)podium.wardrobe.GetCosmetic(ZeepkistNetworking.CosmeticItemType.hat, player2Cosmetics.y, false), (CosmeticColor)podium.wardrobe.GetCosmetic(ZeepkistNetworking.CosmeticItemType.skin, player2Cosmetics.z, false), true);
+            podium.winner2.DoCarSetup((Object_Soapbox)podium.wardrobe.GetCosmetic(ZeepkistNetworking.CosmeticItemType.zeepkist, player2Cosmetics.x, false), (HatValues)podium.wardrobe.GetCosmetic(ZeepkistNetworking.CosmeticItemType.hat, player2Cosmetics.y, false), (CosmeticColor)podium.wardrobe.GetCosmetic(ZeepkistNetworking.CosmeticItemType.skin, player2Cosmetics.z, false), true, false, true);
 
             podium.winner3.gameObject.SetActive(true);
-            podium.winner3.DoCarSetup((Object_Soapbox)podium.wardrobe.GetCosmetic(ZeepkistNetworking.CosmeticItemType.zeepkist, player3Cosmetics.x, false), (HatValues)podium.wardrobe.GetCosmetic(ZeepkistNetworking.CosmeticItemType.hat, player3Cosmetics.y, false), (CosmeticColor)podium.wardrobe.GetCosmetic(ZeepkistNetworking.CosmeticItemType.skin, player3Cosmetics.z, false), true);
+            podium.winner3.DoCarSetup((Object_Soapbox)podium.wardrobe.GetCosmetic(ZeepkistNetworking.CosmeticItemType.zeepkist, player3Cosmetics.x, false), (HatValues)podium.wardrobe.GetCosmetic(ZeepkistNetworking.CosmeticItemType.hat, player3Cosmetics.y, false), (CosmeticColor)podium.wardrobe.GetCosmetic(ZeepkistNetworking.CosmeticItemType.skin, player3Cosmetics.z, false), true, false, true);
 
             //Clear the drop list.
             dropTheseGuys.Clear();
@@ -254,7 +254,7 @@ namespace PodiumPlugin
                 SetupModelCar setupModelCar = GameObject.Instantiate<SetupModelCar>(podium.fallingCarPrefab);
                 setupModelCar.transform.localScale = Vector3.one;
                 Vector3Int rngCosmetic = GetRandomCosmetics();
-                setupModelCar.DoCarSetup((Object_Soapbox)podium.wardrobe.GetCosmetic(ZeepkistNetworking.CosmeticItemType.zeepkist, rngCosmetic.x, false), (HatValues)podium.wardrobe.GetCosmetic(ZeepkistNetworking.CosmeticItemType.hat, rngCosmetic.y, false), (CosmeticColor)podium.wardrobe.GetCosmetic(ZeepkistNetworking.CosmeticItemType.skin, rngCosmetic.z, false), true);
+                setupModelCar.DoCarSetup((Object_Soapbox)podium.wardrobe.GetCosmetic(ZeepkistNetworking.CosmeticItemType.zeepkist, rngCosmetic.x, false), (HatValues)podium.wardrobe.GetCosmetic(ZeepkistNetworking.CosmeticItemType.hat, rngCosmetic.y, false), (CosmeticColor)podium.wardrobe.GetCosmetic(ZeepkistNetworking.CosmeticItemType.skin, rngCosmetic.z, false), true, false, true);
                 setupModelCar.transform.position = podium.dropGuysHere.position + Random.insideUnitSphere * 8f;
                 setupModelCar.transform.rotation = Random.rotation;
                 setupModelCar.gameObject.SetActive(false);
