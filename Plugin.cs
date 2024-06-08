@@ -11,7 +11,7 @@ namespace PodiumPlugin
     {
         public const string pluginGuid = "com.metalted.zeepkist.podiumpreview";
         public const string pluginName = "Level Editor Podium Preview";
-        public const string pluginVersion = "1.4.0";
+        public const string pluginVersion = "1.6.0";
 
         //Create a static reference for the config file.
         public static ConfigFile Cfg { get; private set; }
@@ -216,7 +216,15 @@ namespace PodiumPlugin
             {
                 podium.transform.position = obj.transform.position;
                 podium.transform.rotation = obj.transform.rotation;
-                podium.transform.localScale = obj.transform.localScale;
+
+                Vector3 s = podium.transform.localScale;
+                /*if(Mathf.Min(s.x,s.y,s.z) == 0)
+                {
+                    s = Vector3.one;
+                    PlayerManager.Instance.messenger.Log("Zero scale podium not supported.", 3f);
+                }*/
+
+                podium.transform.localScale = s;
                 podium.localPodium.SetActive(false);
             }
             else
@@ -231,18 +239,18 @@ namespace PodiumPlugin
             podium.wintext3.text = "";
 
             //Place the 3 winners
-            Vector3Int player1Cosmetics = GetRandomCosmetics();
-            Vector3Int player2Cosmetics = GetRandomCosmetics();
-            Vector3Int player3Cosmetics = GetRandomCosmetics();
+            CosmeticsV16 player1Cosmetics = GetRandomCosmetics();
+            CosmeticsV16 player2Cosmetics = GetRandomCosmetics();
+            CosmeticsV16 player3Cosmetics = GetRandomCosmetics();
 
             podium.winner1.gameObject.SetActive(true);
-            podium.winner1.DoCarSetup((Object_Soapbox)podium.wardrobe.GetCosmetic(ZeepkistNetworking.CosmeticItemType.zeepkist, player1Cosmetics.x, false), (HatValues)podium.wardrobe.GetCosmetic(ZeepkistNetworking.CosmeticItemType.hat, player1Cosmetics.y, false), (CosmeticColor)podium.wardrobe.GetCosmetic(ZeepkistNetworking.CosmeticItemType.skin, player1Cosmetics.z, false), true, false, true);
+            podium.winner1.DoCarSetup(player1Cosmetics, true, false, true);
 
             podium.winner2.gameObject.SetActive(true);
-            podium.winner2.DoCarSetup((Object_Soapbox)podium.wardrobe.GetCosmetic(ZeepkistNetworking.CosmeticItemType.zeepkist, player2Cosmetics.x, false), (HatValues)podium.wardrobe.GetCosmetic(ZeepkistNetworking.CosmeticItemType.hat, player2Cosmetics.y, false), (CosmeticColor)podium.wardrobe.GetCosmetic(ZeepkistNetworking.CosmeticItemType.skin, player2Cosmetics.z, false), true, false, true);
+            podium.winner2.DoCarSetup(player2Cosmetics, true, false, true);
 
             podium.winner3.gameObject.SetActive(true);
-            podium.winner3.DoCarSetup((Object_Soapbox)podium.wardrobe.GetCosmetic(ZeepkistNetworking.CosmeticItemType.zeepkist, player3Cosmetics.x, false), (HatValues)podium.wardrobe.GetCosmetic(ZeepkistNetworking.CosmeticItemType.hat, player3Cosmetics.y, false), (CosmeticColor)podium.wardrobe.GetCosmetic(ZeepkistNetworking.CosmeticItemType.skin, player3Cosmetics.z, false), true, false, true);
+            podium.winner3.DoCarSetup(player3Cosmetics, true, false, true);
 
             //Clear the drop list.
             dropTheseGuys.Clear();
@@ -253,8 +261,8 @@ namespace PodiumPlugin
             {
                 SetupModelCar setupModelCar = GameObject.Instantiate<SetupModelCar>(podium.fallingCarPrefab);
                 setupModelCar.transform.localScale = Vector3.one;
-                Vector3Int rngCosmetic = GetRandomCosmetics();
-                setupModelCar.DoCarSetup((Object_Soapbox)podium.wardrobe.GetCosmetic(ZeepkistNetworking.CosmeticItemType.zeepkist, rngCosmetic.x, false), (HatValues)podium.wardrobe.GetCosmetic(ZeepkistNetworking.CosmeticItemType.hat, rngCosmetic.y, false), (CosmeticColor)podium.wardrobe.GetCosmetic(ZeepkistNetworking.CosmeticItemType.skin, rngCosmetic.z, false), true, false, true);
+                CosmeticsV16 rngCosmetic = GetRandomCosmetics();
+                setupModelCar.DoCarSetup(rngCosmetic, true, false, true);
                 setupModelCar.transform.position = podium.dropGuysHere.position + Random.insideUnitSphere * 8f;
                 setupModelCar.transform.rotation = Random.rotation;
                 setupModelCar.gameObject.SetActive(false);
@@ -277,12 +285,35 @@ namespace PodiumPlugin
         }
 
         //Code for random cosmetics.
-        private static Vector3Int GetRandomCosmetics()
+        private static CosmeticsV16 GetRandomCosmetics()
         {
-            Vector3Int cosmetics = new Vector3Int(0, 0, 0);
-            cosmetics.x = GetRandomIntFromList(new List<int>(PlayerManager.Instance.objectsList.wardrobe.everyZeepkist.Keys));
-            cosmetics.y = GetRandomIntFromList(new List<int>(PlayerManager.Instance.objectsList.wardrobe.everyHat.Keys));
-            cosmetics.z = GetRandomIntFromList(new List<int>(PlayerManager.Instance.objectsList.wardrobe.everyColor.Keys));
+            CosmeticsV16 cosmetics = new CosmeticsV16();
+            int zeepkist = GetRandomIntFromList(new List<int>(PlayerManager.Instance.objectsList.wardrobe.everyZeepkist.Keys));
+            int hat = GetRandomIntFromList(new List<int>(PlayerManager.Instance.objectsList.wardrobe.everyHat.Keys));
+            int color = GetRandomIntFromList(new List<int>(PlayerManager.Instance.objectsList.wardrobe.everyColor.Keys));
+            int glasses = GetRandomIntFromList(new List<int>(PlayerManager.Instance.objectsList.wardrobe.everyGlasses.Keys));
+            int wheel = GetRandomIntFromList(new List<int>(PlayerManager.Instance.objectsList.wardrobe.everyWheel.Keys));
+            int paraglider = GetRandomIntFromList(new List<int>(PlayerManager.Instance.objectsList.wardrobe.everyParaglider.Keys));
+            int horn = GetRandomIntFromList(new List<int>(PlayerManager.Instance.objectsList.wardrobe.everyHorn.Keys));
+
+            ZeepkistNetworking.CosmeticIDs cosmeticIDs = new ZeepkistNetworking.CosmeticIDs()
+            {
+                zeepkist = zeepkist,
+                frontWheels = wheel,
+                rearWheels = wheel,
+                paraglider = paraglider,
+                horn = horn,
+                hat = hat,
+                glasses = glasses,
+                color_body = color,
+                color_leftArm = color,
+                color_rightArm = color,
+                color_leftLeg = color,
+                color_rightLeg = color,
+                color = color
+            };
+
+            cosmetics.IDsToCosmetics(cosmeticIDs);
             return cosmetics;
         }
 
